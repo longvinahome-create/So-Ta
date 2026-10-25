@@ -1,0 +1,1062 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#e5e4de" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222625" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Sổ tạ">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="format-detection" content="telephone=no">
+<title>Sổ tạ - giáo án hybrid</title>
+<style>
+:root{
+  color-scheme: light dark;
+  --bg:#e5e4de; --surf:#f1f0eb; --ink:#1d201e; --ink2:#575c58; --line:#bdbcb3; --hair:#d3d2ca;
+  --up:#1f7a45; --hold:#7d5d00; --down:#bb352b; --focus:#2a63c4;
+  --c-push:#c8372d; --on-push:#ffffff;
+  --c-pull:#2a63c4; --on-pull:#ffffff;
+  --c-cond:#e0b01c; --on-cond:#1d201e;
+  --c-upper:#2e8f55; --on-upper:#ffffff;
+  --c-legs:#f4f2ea; --on-legs:#1d201e;
+  --c-arms:#e0702a; --on-arms:#1d201e;
+  --c-rest:#9aa09b; --on-rest:#1d201e;
+  --fnum:"Bahnschrift","Avenir Next Condensed","Roboto Condensed","sans-serif-condensed","Arial Narrow",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#222625; --surf:#2c3130; --ink:#ecebe3; --ink2:#a4aaa5; --line:#4a504d; --hair:#3a3f3d;
+    --up:#52c783; --hold:#e6bd3f; --down:#f0705f; --focus:#7aa8ff;
+    --c-legs:#d9d7cc;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+html{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+.num{font-family:var(--fnum);font-variant-numeric:tabular-nums;font-weight:700}
+.app{max-width:560px;margin:0 auto;padding:calc(10px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) calc(100px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left))}
+.top{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0 8px}
+.brand{font:700 20px var(--fnum);letter-spacing:.02em}
+.saved{font-size:12px;color:var(--ink2)}
+.saved.warn{color:var(--down)}
+h1{font:700 30px/1.05 var(--fnum);margin:0}
+h2{font:700 22px/1.15 var(--fnum);margin:26px 0 6px}
+h3{font:700 18px/1.2 var(--fnum);margin:0}
+p{margin:6px 0}
+.muted{color:var(--ink2)}
+.small{font-size:13px}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-appearance:none;appearance:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+button:focus-visible,.in:focus-visible,summary:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+
+/* nav */
+.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--surf);border-top:1px solid var(--line);padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);z-index:5}
+body.kb .tabs{display:none}
+body.kb .app{padding-bottom:24px}
+.tabs div{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+.tabs button{background:none;border:0;padding:15px 2px 14px;min-height:52px;font-size:13px;font-weight:600;color:var(--ink2)}
+.tabs button.on{color:var(--ink);box-shadow:inset 0 3px 0 var(--ink)}
+
+/* plate */
+.plate{display:grid;place-items:center;width:56px;height:56px;border-radius:50%;background:var(--c,var(--ink2));color:var(--on,#fff);font:700 20px var(--fnum);box-shadow:inset 0 0 0 4px rgba(255,255,255,.22),inset 0 0 0 5px rgba(0,0,0,.18);flex:none}
+.plate.sm{width:30px;height:30px;font-size:13px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.22)}
+.hero{display:flex;gap:14px;align-items:center;margin:6px 0 14px}
+.sub{margin:2px 0 0;color:var(--ink2)}
+
+/* controls */
+.in{font:inherit;font-size:16px;color:var(--ink);background-color:var(--surf);border:1px solid var(--line);border-radius:8px;padding:0 10px;height:44px;min-width:0;width:100%;-webkit-appearance:none;appearance:none}
+input[type=date].in{display:block;text-align:center;min-height:44px}
+input[type=date].in::-webkit-date-and-time-value{text-align:center}
+.in.num{font-size:20px;text-align:center;padding:0 4px}
+select.in{padding-right:30px;background-image:linear-gradient(45deg,transparent 50%,var(--ink2) 50%),linear-gradient(135deg,var(--ink2) 50%,transparent 50%);background-position:calc(100% - 18px) 19px,calc(100% - 13px) 19px;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+.ctl{display:grid;grid-template-columns:44px 1fr 44px;gap:8px;margin-bottom:8px}
+.ctl select{grid-column:1/-1}
+.ib{height:44px;border-radius:8px;border:1px solid var(--line);background:var(--surf);font-size:22px;line-height:1}
+.btn{height:40px;padding:0 14px;border-radius:8px;border:1px solid var(--ink);background:transparent;font-weight:600;font-size:14px}
+.btn.fill{background:var(--ink);color:var(--bg)}
+.btn.sm{height:40px;padding:0 12px;font-size:14px}
+.btn.on{background:var(--ink);color:var(--bg)}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.chip{padding:8px 12px;border-left:4px solid var(--c-upper);background:var(--surf);border-radius:0 6px 6px 0;margin:8px 0;font-size:14px}
+.chip.deload{border-left-color:var(--c-cond)}
+
+.body{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 4px}
+.body.one{grid-template-columns:1fr}
+.body label{display:block;font-size:13px;color:var(--ink2)}
+.body label .in{margin-top:3px}
+
+/* exercise */
+.ex{border-top:3px solid var(--c);margin-top:18px;padding-top:10px}
+.eh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.rx{font-size:13px;color:var(--ink2)}
+.tg{display:flex;gap:8px;align-items:center;margin:8px 0 2px;flex-wrap:wrap}
+.big{font-size:24px}
+.why{font-size:13px;color:var(--ink2);margin:2px 0 6px}
+.pl{font-size:13px;margin:2px 0 6px}
+.pill{display:inline-block;padding:1px 9px;border-radius:99px;font-size:12px;font-weight:700;border:1.5px solid currentColor;white-space:nowrap}
+.pill.up{color:var(--up)} .pill.hold{color:var(--hold)} .pill.down{color:var(--down)} .pill.neu{color:var(--ink2)}
+.srow{display:grid;grid-template-columns:24px minmax(0,1fr) minmax(0,1fr) 70px 48px;gap:6px;align-items:center;margin:6px 0}
+.srow.hd{font-size:12px;color:var(--ink2);margin-bottom:0}
+.srow .r{text-align:right}
+.sn{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);font:700 12px var(--fnum);color:var(--ink2)}
+.srow.done .sn{background:var(--c);border-color:var(--c);color:var(--on)}
+.e1{font:600 15px var(--fnum);color:var(--ink2);text-align:right}
+.live{font-size:13px;min-height:19px;margin:4px 0 0;color:var(--ink)}
+.note{height:44px;font-size:16px}
+.sess{margin-top:22px;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.blk{border-top:3px solid var(--c);padding-top:10px;margin-top:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.grid2 label,.fld{display:block;font-size:13px;color:var(--ink2)}
+.grid2 label .in,.fld .in{margin-top:3px}
+.fld{margin:10px 0}
+
+/* calendar */
+.mh{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:8px;margin:6px 0 10px}
+.mh strong{text-align:center;font:700 22px var(--fnum)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal .wd{font-size:12px;color:var(--ink2);text-align:center;padding:2px 0}
+.cell{aspect-ratio:1;border:1px solid var(--hair);border-radius:6px;background:var(--surf);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:0;font:600 14px var(--fnum)}
+.cell.off{visibility:hidden}
+.cell.today{border:2px solid var(--ink)}
+.cell.sel{background:var(--ink);color:var(--bg)}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--c);box-shadow:inset 0 0 0 2px rgba(255,255,255,.28)}
+.dot.miss{background:none;border:2px solid var(--line);box-shadow:none}
+.dot.none{visibility:hidden}
+.stats{display:flex;flex-wrap:wrap;gap:6px 18px;margin:6px 0 12px}
+.stats div{font-size:13px;color:var(--ink2)}
+.stats b{display:block;font:700 22px var(--fnum);color:var(--ink)}
+.dl{padding:10px 0;border-bottom:1px solid var(--hair);font-size:14px}
+.dl b{font-weight:700}
+.dl.cs{display:grid;gap:6px;justify-items:start}
+.dl.cs .eh{width:100%;align-items:center}
+
+/* charts */
+.chart{width:100%;height:auto;display:block;margin:4px 0 2px}
+.chart .g{stroke:var(--hair);stroke-width:1}
+.chart .ln{fill:none;stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
+.chart .ln.ex{stroke:var(--ink2);stroke-width:2;stroke-dasharray:5 4}
+.chart .pt{fill:var(--bg);stroke-width:2}
+.chart text{fill:var(--ink2);font:11px system-ui,sans-serif}
+.chart .tl{fill:var(--ink);font-weight:700}
+.chart .bar{fill:var(--ink2);opacity:.38}
+.chart .bar.cur{fill:var(--c-pull);opacity:1}
+.empty{color:var(--ink2);font-size:14px;padding:10px 0}
+.hb{display:grid;grid-template-columns:78px 1fr 28px;gap:8px;align-items:center;margin:7px 0;font-size:14px}
+.hb .tr{position:relative;height:16px;background:var(--hair);border-radius:3px}
+.hb .band{position:absolute;top:-3px;bottom:-3px;left:50%;width:30%;border:1.5px dashed var(--ink2);border-radius:3px;pointer-events:none}
+.hb .fl{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--c-upper)}
+.hb .fl.low{background:var(--c-cond)}
+.hb .fl.hi{background:var(--c-push)}
+.hb .v{text-align:right}
+
+/* recs */
+.rec{padding:14px 0;border-bottom:1px solid var(--hair)}
+.rec .rh{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.rec .bg{height:8px;background:var(--hair);border-radius:4px;margin:8px 0 3px;overflow:hidden}
+.rec .bg i{display:block;height:100%;background:var(--c);border-radius:4px}
+.rec .mt{font-size:13px;color:var(--ink2);margin:2px 0}
+table{border-collapse:collapse;width:100%;font-size:14px}
+td,th{padding:6px 4px;border-bottom:1px solid var(--hair);text-align:left}
+th{font-size:12px;color:var(--ink2);font-weight:600}
+tr.hl td{background:var(--surf);font-weight:700}
+details{border-top:1px solid var(--line);padding:8px 0;margin-top:10px}
+summary{font-weight:700;cursor:pointer;padding:6px 0}
+textarea.in{height:140px;padding:8px;font:16px/1.4 system-ui,sans-serif;font-size:16px}
+.out{font:700 20px var(--fnum);margin:4px 0 10px}
+@media (max-width:360px){
+  .srow{grid-template-columns:22px minmax(0,1fr) minmax(0,1fr) 62px 42px;gap:4px}
+  .in.num{font-size:18px}
+  h1{font-size:26px}
+  .grid2,.body{gap:6px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top"><div class="brand">Sổ tạ</div><div id="saved" class="saved"></div></div>
+  <main id="main"><p class="empty">Đang tải dữ liệu...</p></main>
+</div>
+<nav class="tabs" id="tabs" aria-label="Điều hướng">
+  <div>
+    <button data-tab="today">Hôm nay</button>
+    <button data-tab="cal">Lịch</button>
+    <button data-tab="sum">Tổng kết</button>
+    <button data-tab="prog">Tăng tạ</button>
+    <button data-tab="me">Hồ sơ</button>
+  </div>
+</nav>
+
+<script>
+'use strict';
+/* ========= Chương trình ========= */
+const KEY='so-ta-hybrid-v1';
+const WD=['Chủ nhật','Thứ hai','Thứ ba','Thứ tư','Thứ năm','Thứ sáu','Thứ bảy'];
+const WS=['T2','T3','T4','T5','T6','T7','CN'];
+const MUS=['Ngực','Lưng','Vai','Tay trước','Tay sau','Chân','Bắp chân','Core'];
+const EX={};
+function mk(id,name,sets,lo,hi,pct,m,inc,o){EX[id]=Object.assign({id:id,name:name,sets:sets,lo:lo,hi:hi,pct:pct,m:m,inc:inc},o||{});return id;}
+const DAYS=[
+ {k:'push',t:'Push + Core',s:'T2',dow:1,type:'lift',ex:[
+  mk('bench','Barbell Bench Press',3,4,6,'80-85%','Ngực',2.5,{bar:1}),
+  mk('incline','Incline Barbell Bench',3,4,6,'80-85%','Ngực',2.5,{bar:1}),
+  mk('dbbench','Dumbbell Bench Press',3,4,6,'80-85%','Ngực',2,{note:'tạ mỗi bên'}),
+  mk('mil','Seated Military Press',3,8,10,'70-75%','Vai',2.5,{bar:1}),
+  mk('cablecrunch','Cable Crunch',3,8,10,'','Core',2.5)]},
+ {k:'pull',t:'Pull + Calves',s:'T3',dow:2,type:'lift',ex:[
+  mk('dl','Barbell Deadlift',3,4,6,'80-85%','Lưng',5,{bar:1}),
+  mk('dbrow','One-Arm DB Row',3,4,6,'80-85%','Lưng',2,{note:'tạ 1 tay'}),
+  mk('latpd','Wide Grip Lat Pulldown',3,4,6,'80-85%','Lưng',2.5),
+  mk('chin','Weighted Chin-Up',3,8,10,'70-75%','Lưng',2.5,{bw:1,note:'tạ thêm, 0 = chỉ cân nặng cơ thể'}),
+  mk('legcalf','Leg Press Calf Raise',3,8,10,'','Bắp chân',5)]},
+ {k:'cond',t:'Conditioning',s:'T4',dow:3,type:'cond',ex:[]},
+ {k:'upper',t:'Upper + Core',s:'T5',dow:4,type:'lift',ex:[
+  mk('cgbp','Close-Grip Bench Press',3,4,6,'80-85%','Tay sau',2.5,{bar:1}),
+  mk('sidelat','DB Side Lateral Raise',3,8,10,'','Vai',1,{note:'tạ mỗi bên'}),
+  mk('reardelt','Seated DB Rear Lateral Raise',3,8,10,'','Vai',1,{note:'tạ mỗi bên'}),
+  mk('pclean','Barbell Power Clean',3,3,5,'','Lưng',2.5,{bar:1}),
+  mk('legraise',"Captain's Chair Leg Raise",3,8,10,'','Core',2.5,{bw:1,note:'tạ thêm, 0 = không tạ'})]},
+ {k:'legs',t:'Legs',s:'T6',dow:5,type:'lift',ex:[
+  mk('squat','Barbell Back Squat',3,4,6,'80-85%','Chân',5,{bar:1}),
+  mk('legpress','Leg Press',3,4,6,'80-85%','Chân',5),
+  mk('legcurl','Lying Leg Curl',3,4,6,'80-85%','Chân',2.5),
+  mk('quadext','Quad Extension',3,8,10,'','Chân',2.5),
+  mk('seatedcalf','Seated Calf Raise',3,8,10,'','Bắp chân',2.5)]},
+ {k:'arms',t:'Tay + Vai sau + Core + Bắp chân',s:'T7',dow:6,type:'lift',ex:[
+  mk('ezcurl','EZ Bar Curl',3,8,10,'','Tay trước',2.5),
+  mk('hammer','Hammer Curl',3,10,12,'','Tay trước',2,{note:'tạ mỗi bên'}),
+  mk('ohtri','Overhead Triceps Extension',3,10,12,'','Tay sau',2.5),
+  mk('facepull','Face Pull',3,12,15,'','Vai',2.5),
+  mk('pallof','Pallof Press',3,10,12,'','Core',2.5,{note:'mỗi bên'}),
+  mk('stcalf','Standing Calf Raise',3,12,15,'','Bắp chân',2.5)]},
+ {k:'rest',t:'Zone 2 hoặc nghỉ',s:'CN',dow:0,type:'rest',ex:[]}
+];
+const DAY={},BYDOW={};
+DAYS.forEach(function(d){DAY[d.k]=d;BYDOW[d.dow]=d.k;});
+const EXDAY={};
+DAYS.forEach(function(d){d.ex.forEach(function(id){EXDAY[id]=d.k;});});
+const BASE_LIFTS=[['bench','Bench Press'],['mil','Military Press'],['dl','Deadlift'],['squat','Back Squat'],['chin','Weighted Chin-Up (tạ thêm)']];
+const QS=[
+ {id:'body',q:'Cân nặng hiện tại?',ph:'vd: 74 kg'},
+ {id:'exp',q:'Bạn đã tập tạ liên tục được bao lâu?',opt:['','Dưới 6 tháng','6-12 tháng','1-3 năm','Trên 3 năm']},
+ {id:'pain',q:'Có chấn thương hoặc chỗ hay đau (vai, lưng dưới, gối...) cần tránh không?',ph:'vd: vai phải đau khi bench'},
+ {id:'gear',q:'Phòng tập có những gì? Tạ đơn nặng nhất, có sled hoặc carry, có máy chèo?',ph:'vd: DB tới 40 kg, có máy chèo, không có sled'},
+ {id:'time',q:'Bạn tập vào giờ nào và tối đa bao lâu mỗi buổi?',ph:'vd: 18h, 75 phút'},
+ {id:'goal',q:'Mục tiêu 3 tháng tới: tăng cân, giữ cân hay siết mỡ? Muốn đạt bao nhiêu kg hoặc số đo?',ph:'vd: tăng 3 kg, tay 38 cm'},
+ {id:'eat',q:'Mỗi ngày đang ăn khoảng bao nhiêu kcal và protein?',ph:'vd: 2600 kcal, 130 g protein'},
+ {id:'sauna',q:'Có muốn ghi sauna và cold plunge sau buổi tập (thời gian, nhiệt độ)?',opt:['','Có','Không']},
+ {id:'swap',q:'Bài nào bạn muốn thay hoặc bỏ khỏi giáo án?',ph:'vd: bỏ power clean'},
+ {id:'more',q:'Bạn muốn mình bổ sung gì cho sổ này?',ph:'vd: nhắc lịch, ảnh tiến độ, ghi chép ăn uống'}
+];
+
+/* ========= Trạng thái ========= */
+const defS=function(){return {v:1,logs:{},settings:{base1rm:{},inc:{},bar:20,plates:'25,20,15,10,5,2.5,1.25',cycleStart:'',cycleLen:6,answers:{}}};};
+let S=defS();
+const pad=function(n){return String(n).padStart(2,'0');};
+const ymd=function(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());};
+const parseYmd=function(s){const a=s.split('-').map(Number);return new Date(a[0],a[1]-1,a[2]);};
+const addDays=function(d,n){const x=new Date(d.getTime());x.setDate(x.getDate()+n);return x;};
+const todayStr=ymd(new Date());
+const ui={tab:'today',date:todayStr,dayKey:null,month:todayStr.slice(0,7),calSel:todayStr,selEx:'bench',pctEx:'bench',wkOff:0,armDel:null,showIO:null,ans:null};
+let saveT=null;
+
+function setSaved(t,warn){const e=document.getElementById('saved');if(e){e.textContent=t;e.className='saved'+(warn?' warn':'');}}
+function save(){clearTimeout(saveT);setSaved('Đang lưu...');saveT=setTimeout(doSave,500);}
+const store={
+  ok:function(){
+    if(window.storage)return true;
+    try{const k='__t';localStorage.setItem(k,'1');localStorage.removeItem(k);return true;}catch(e){return false;}
+  },
+  get:async function(){
+    if(window.storage){
+      try{const r=await window.storage.get(KEY,false);return r&&r.value?r.value:null;}catch(e){return null;}
+    }
+    try{return localStorage.getItem(KEY);}catch(e){return null;}
+  },
+  set:async function(v){
+    if(window.storage){await window.storage.set(KEY,v,false);return;}
+    localStorage.setItem(KEY,v);
+  }
+};
+async function doSave(){
+  try{
+    await store.set(JSON.stringify(S));
+    setSaved('Đã lưu');
+  }catch(e){setSaved('Chưa lưu được, hãy xuất dữ liệu để sao lưu',true);}
+}
+async function load(){
+  try{
+    const v=await store.get();
+    if(v){
+      const o=JSON.parse(v);
+      S=Object.assign(defS(),o);
+      S.settings=Object.assign(defS().settings,o.settings||{});
+    }
+  }catch(e){}
+  try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();}catch(e){}
+}
+
+/* ========= Tiện ích ========= */
+const esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
+const nn=function(v){if(v===''||v==null)return null;const x=parseFloat(String(v).replace(',','.'));return isNaN(x)?null:x;};
+const fmt=function(x,d){d=d==null?1:d;return (x==null||isNaN(x))?'–':String(Math.round(x*Math.pow(10,d))/Math.pow(10,d));};
+const val=function(x){return x==null?'':esc(x);};
+const roundStep=function(x,s){s=s||2.5;return +(Math.round(x/s)*s).toFixed(2);};
+const dm=function(d){return d.slice(8)+'/'+d.slice(5,7);};
+const dc=function(k){return '--c:var(--c-'+k+');--on:var(--on-'+k+');';};
+const getInc=function(ex){const v=S.settings.inc[ex.id];return v!=null&&v!==''?+v:ex.inc;};
+const dayKeyFor=function(date){return (S.logs[date]&&S.logs[date].day)||BYDOW[parseYmd(date).getDay()];};
+const weekKey=function(date){const d=parseYmd(date);d.setDate(d.getDate()-((d.getDay()+6)%7));return ymd(d);};
+const blank=function(){return {w:null,r:null,rpe:null};};
+
+function ensureLog(date){
+  const L=S.logs[date]||(S.logs[date]={day:ui.dayKey,ex:{}});
+  if(!L.day)L.day=ui.dayKey;
+  if(!L.ex)L.ex={};
+  return L;
+}
+function vsets(ex,sets){
+  return (sets||[]).filter(function(s){return s&&s.r>0&&(s.w>0||ex.bw);}).map(function(s){return {w:s.w||0,r:s.r,rpe:s.rpe==null?null:s.rpe};});
+}
+function hasWork(L){
+  if(!L)return false;
+  if(L.cond&&L.cond.rounds>0)return true;
+  if(L.rest&&L.rest.min>0)return true;
+  for(const id in (L.ex||{})){if(EX[id]&&vsets(EX[id],L.ex[id].sets).length)return true;}
+  return false;
+}
+
+/* ========= Công thức RM và RPE ========= */
+function e1rm(w,r,rpe){
+  if(!(w>0)||!(r>0))return null;
+  const rir=rpe!=null?Math.max(0,10-rpe):0;
+  const t=r+rir;
+  if(t<=1)return w;
+  return w*(1+t/30);
+}
+function estRPE(w,r,B){
+  if(!B||!(w>0)||!(r>0))return null;
+  const p=w/B;
+  if(p>=1)return 10;
+  const mx=30*(1/p-1);
+  let rpe=10-(mx-r);
+  if(rpe>10)rpe=10;
+  if(rpe<5)rpe=5;
+  return Math.round(rpe*2)/2;
+}
+function baselineFor(id,before,rpeMode){
+  let b=+S.settings.base1rm[id]||0;
+  const ex=EX[id];
+  for(const d in S.logs){
+    if(d>=before)continue;
+    const e=S.logs[d].ex&&S.logs[d].ex[id];
+    if(!e)continue;
+    vsets(ex,e.sets).forEach(function(s){
+      if(s.w>0&&s.r<=15){const v=e1rm(s.w,s.r,(s.rpe==null&&rpeMode)?9:s.rpe);if(v&&v>b)b=v;}
+    });
+  }
+  return b||null;
+}
+function sessions(ex,before,limit){
+  const out=[];
+  const ds=Object.keys(S.logs).filter(function(d){return d<before;}).sort().reverse();
+  for(let i=0;i<ds.length;i++){
+    const d=ds[i];
+    const e=S.logs[d].ex&&S.logs[d].ex[ex.id];
+    if(!e)continue;
+    const v=vsets(ex,e.sets);
+    if(v.length){out.push({date:d,sets:v});if(out.length>=limit)break;}
+  }
+  return out;
+}
+function evalSets(ex,sets,date){
+  if(!sets.length)return null;
+  const cand=sets.filter(function(s){return s.r>=ex.lo;});
+  const workW=cand.length?Math.max.apply(null,cand.map(function(s){return s.w;})):Math.max.apply(null,sets.map(function(s){return s.w;}));
+  const ws=sets.filter(function(s){return s.w===workW;});
+  const rp=ws.map(function(s){return s.rpe;}).filter(function(x){return x!=null;});
+  return {
+    workW:workW,ws:ws,
+    hitTop:ws.length>=ex.sets&&ws.every(function(s){return s.r>=ex.hi;}),
+    below:ws.some(function(s){return s.r<ex.lo;}),
+    avg:rp.length?rp.reduce(function(a,b){return a+b;},0)/rp.length:null,
+    minR:Math.min.apply(null,ws.map(function(s){return s.r;})),
+    total:ws.reduce(function(a,s){return a+Math.min(s.r,ex.hi);},0)
+  };
+}
+function recommend(ex,before){
+  const inc=getInc(ex);
+  const hist=sessions(ex,before,2);
+  const range=ex.lo+'-'+ex.hi;
+  if(!hist.length){
+    const b=+S.settings.base1rm[ex.id];
+    if(b>0){
+      const r=Math.round((ex.lo+ex.hi)/2);
+      const w=roundStep(b/(1+(r+3)/30),inc||2.5);
+      return {st:'start',w:w,reps:range,why:'Bắt đầu nhẹ, khoảng RPE 7 (còn dư 3 reps), tính từ 1RM '+fmt(b)+' kg.',last:null,ev:null,workW:null};
+    }
+    return {st:'new',w:null,reps:range,why:'Chưa có dữ liệu. Chọn tạ làm được '+range+' reps mà còn dư 2 reps.',last:null,ev:null,workW:null};
+  }
+  const a=hist[0];
+  const ev=evalSets(ex,a.sets,a.date);
+  const prev=hist[1]?evalSets(ex,hist[1].sets,hist[1].date):null;
+  const base={last:a,ev:ev,workW:ev.workW};
+  const out=function(st,w,reps,why){return Object.assign({},base,{st:st,w:w,reps:reps,why:why});};
+  if(ev.ws.length<ex.sets)return out('hold',ev.workW,range,'Buổi trước mới làm '+ev.ws.length+'/'+ex.sets+' set ở '+fmt(ev.workW)+' kg. Làm đủ set trước khi tăng.');
+  if(ev.hitTop){
+    if(ev.avg!=null&&ev.avg>=9.5)return out('hold',ev.workW,range,'Đủ reps nhưng RPE bạn nhập (trung bình '+fmt(ev.avg)+') quá cao. Lặp lại '+fmt(ev.workW)+' kg thêm 1 buổi.');
+    return out('up',+(ev.workW+inc).toFixed(2),range,'Đã đủ '+ex.sets+' set × '+ex.hi+' reps. Tăng '+fmt(inc)+' kg rồi làm lại từ '+ex.lo+' reps.');
+  }
+  if(ev.below){
+    if(prev&&prev.below&&prev.workW>=ev.workW*0.97)return out('down',roundStep(ev.workW*0.9,inc||2.5),range,'Hai buổi liền có set dưới '+ex.lo+' reps. Giảm khoảng 10% rồi xây lại.');
+    return out('hold',ev.workW,range,'Có set dưới '+ex.lo+' reps. Giữ '+fmt(ev.workW)+' kg, mục tiêu mọi set từ '+ex.lo+' reps.');
+  }
+  const tgt=Math.min(ex.hi,ev.minR+1);
+  return out('hold',ev.workW,String(tgt),'Giữ '+fmt(ev.workW)+' kg, cố làm '+tgt+' reps ở mọi set để chạm ngưỡng '+ex.hi+'.');
+}
+function liveHint(ex,date){
+  const L=S.logs[date];
+  const e=L&&L.ex&&L.ex[ex.id];
+  const v=e?vsets(ex,e.sets):[];
+  if(!v.length)return '';
+  const ev=evalSets(ex,v,date);
+  if(ev.hitTop){
+    if(ev.avg!=null&&ev.avg>=9.5)return 'Đủ reps nhưng RPE bạn nhập từ 9.5: lặp lại tạ này thêm 1 buổi.';
+    return 'Đạt ngưỡng: buổi sau tăng lên '+fmt(ev.workW+getInc(ex))+' kg.';
+  }
+  return 'Tiến độ tới ngưỡng: '+ev.total+'/'+(ex.sets*ex.hi)+' reps ('+ex.sets+' set × '+ex.hi+').';
+}
+function plateTxt(total,ex){
+  if(!ex.bar||!(total>0))return '';
+  const bar=+S.settings.bar||20;
+  const avail=String(S.settings.plates).split(',').map(Number).filter(function(x){return x>0;}).sort(function(a,b){return b-a;});
+  let rem=(total-bar)/2;
+  if(rem<0)return '';
+  const out=[];
+  avail.forEach(function(p){while(rem>=p-1e-9){out.push(p);rem=+(rem-p).toFixed(3);}});
+  if(!out.length&&rem===0)return 'Chỉ thanh '+bar+' kg.';
+  return 'Mỗi bên: '+out.join(' + ')+(rem>0.01?' (dư '+fmt(rem*2,2)+' kg, không ghép đủ)':'')+' (thanh '+bar+' kg)';
+}
+function cycleInfo(date){
+  const st=S.settings.cycleStart;
+  const len=+S.settings.cycleLen||6;
+  if(!st)return null;
+  const days=Math.round((parseYmd(date)-parseYmd(st))/864e5);
+  if(days<0)return null;
+  const w=Math.floor(days/7)%len+1;
+  return {w:w,len:len,deload:w===len};
+}
+
+/* ========= Thống kê ========= */
+function logVol(L){
+  let v=0,s=0;
+  for(const id in (L.ex||{})){
+    if(!EX[id])continue;
+    vsets(EX[id],L.ex[id].sets).forEach(function(x){v+=x.w*x.r;s++;});
+  }
+  return {v:v,s:s};
+}
+function prMap(){
+  const run={},out={};
+  for(const k in S.settings.base1rm)run[k]=+S.settings.base1rm[k]||0;
+  Object.keys(S.logs).sort().forEach(function(d){
+    const ex=S.logs[d].ex||{};
+    for(const id in ex){
+      if(!EX[id])continue;
+      let best=0;
+      vsets(EX[id],ex[id].sets).forEach(function(s){
+        if(s.w>0&&s.r<=15){const e=e1rm(s.w,s.r,s.rpe);if(e>best)best=e;}
+      });
+      if(best>0){
+        if((run[id]||0)>0&&best>run[id]*1.001)out[d]=(out[d]||0)+1;
+        if(best>(run[id]||0))run[id]=best;
+      }
+    }
+  });
+  return out;
+}
+function monthStats(ym){
+  const a=ym.split('-').map(Number);
+  const dim=new Date(a[0],a[1],0).getDate();
+  let planned=0,done=0,vol=0,sets=0,pr=0;
+  const prs=prMap();
+  for(let d=1;d<=dim;d++){
+    const ds=ym+'-'+pad(d);
+    const dow=parseYmd(ds).getDay();
+    const L=S.logs[ds];
+    if(ds<=todayStr&&DAY[BYDOW[dow]].type!=='rest')planned++;
+    if(L&&hasWork(L)&&DAY[L.day||BYDOW[dow]].type!=='rest'){done++;const lv=logVol(L);vol+=lv.v;sets+=lv.s;}
+    if(prs[ds])pr+=prs[ds];
+  }
+  return {planned:planned,done:done,vol:vol,sets:sets,pr:pr};
+}
+function muscleSets(wk){
+  const o={};
+  MUS.forEach(function(m){o[m]=0;});
+  Object.keys(S.logs).forEach(function(d){
+    if(weekKey(d)!==wk)return;
+    const L=S.logs[d];
+    for(const id in (L.ex||{})){if(EX[id])o[EX[id].m]+=vsets(EX[id],L.ex[id].sets).length;}
+  });
+  return o;
+}
+function e1Series(id){
+  const ex=EX[id],out=[];
+  Object.keys(S.logs).sort().forEach(function(d){
+    const e=S.logs[d].ex&&S.logs[d].ex[id];
+    if(!e)return;
+    let b=0;
+    vsets(ex,e.sets).forEach(function(s){if(s.w>0&&s.r<=15){const v=e1rm(s.w,s.r,s.rpe);if(v>b)b=v;}});
+    if(b>0)out.push({t:parseYmd(d).getTime(),y:+b.toFixed(1),l:d});
+  });
+  return out;
+}
+function rpeSeries(){
+  const out=[];
+  Object.keys(S.logs).sort().forEach(function(d){
+    const L=S.logs[d],arr=[];
+    for(const id in (L.ex||{})){
+      const ex=EX[id];
+      if(!ex)continue;
+      vsets(ex,L.ex[id].sets).forEach(function(s){
+        const r=s.rpe!=null?s.rpe:(s.w>0?estRPE(s.w,s.r,baselineFor(id,d,true)):null);
+        if(r!=null)arr.push(r);
+      });
+    }
+    if(arr.length)out.push({t:parseYmd(d).getTime(),y:+(arr.reduce(function(a,b){return a+b;},0)/arr.length).toFixed(1),l:d});
+  });
+  return out.slice(-14);
+}
+function bodySeries(){
+  const out=[];
+  Object.keys(S.logs).sort().forEach(function(d){const b=S.logs[d].body;if(b>0)out.push({t:parseYmd(d).getTime(),y:b,l:d});});
+  return out;
+}
+function exWithData(){return Object.keys(EX).filter(function(id){return e1Series(id).length>0;});}
+
+/* ========= Biểu đồ SVG ========= */
+function lineChart(pts,o){
+  o=o||{};
+  if(!pts.length)return '<p class="empty">'+(o.empty||'Chưa có dữ liệu.')+'</p>';
+  const ex=o.extra||[],all=pts.concat(ex);
+  const W=320,H=170,L=38,R=14,T=16,Bt=26;
+  const ys=all.map(function(p){return p.y;}),ts=all.map(function(p){return p.t;});
+  let mn=Math.min.apply(null,ys),mx=Math.max.apply(null,ys);
+  if(mn===mx){mn-=1;mx+=1;}
+  const pd=(mx-mn)*0.12;mn-=pd;mx+=pd;
+  const t0=Math.min.apply(null,ts),t1=Math.max.apply(null,ts);
+  const X=function(t){return (all.length===1||t1===t0)?(L+(W-L-R)/2):L+(t-t0)/(t1-t0)*(W-L-R);};
+  const Y=function(y){return T+(1-(y-mn)/(mx-mn))*(H-T-Bt);};
+  const path=function(a){return a.map(function(p,i){return (i?'L':'M')+X(p.t).toFixed(1)+' '+Y(p.y).toFixed(1);}).join(' ');};
+  let s='<svg class="chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(o.label||'Biểu đồ')+'">';
+  for(let i=0;i<3;i++){
+    const v=mn+(mx-mn)*i/2,y=Y(v);
+    s+='<line class="g" x1="'+L+'" x2="'+(W-R)+'" y1="'+y.toFixed(1)+'" y2="'+y.toFixed(1)+'"/><text x="'+(L-5)+'" y="'+(y+4).toFixed(1)+'" text-anchor="end">'+fmt(v,o.dec==null?0:o.dec)+'</text>';
+  }
+  const col=o.c||'var(--ink)';
+  if(ex.length>1)s+='<path class="ln ex" d="'+path(ex)+'"/>';
+  s+='<path class="ln" style="stroke:'+col+'" d="'+path(pts)+'"/>';
+  pts.forEach(function(p){s+='<circle class="pt" style="stroke:'+col+'" cx="'+X(p.t).toFixed(1)+'" cy="'+Y(p.y).toFixed(1)+'" r="3.5"/>';});
+  const last=pts[pts.length-1];
+  s+='<text class="tl" x="'+Math.min(X(last.t),W-R-8).toFixed(1)+'" y="'+(Y(last.y)-9).toFixed(1)+'" text-anchor="middle">'+fmt(last.y,o.dec==null?0:o.dec)+'</text>';
+  s+='<text x="'+L+'" y="'+(H-6)+'">'+dm(pts[0].l)+'</text>';
+  if(pts.length>1)s+='<text x="'+(W-R)+'" y="'+(H-6)+'" text-anchor="end">'+dm(last.l)+'</text>';
+  return s+'</svg>';
+}
+function barChart(items,label){
+  const W=320,H=170,L=8,R=8,T=20,Bt=40;
+  const mx=Math.max.apply(null,items.map(function(i){return i.v;}))||1;
+  const bw=(W-L-R)/items.length;
+  let s='<svg class="chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(label)+'">';
+  items.forEach(function(it,i){
+    const h=(H-T-Bt)*it.v/mx,x=L+i*bw+bw*0.15,w=bw*0.7,y=H-Bt-h;
+    s+='<rect class="bar'+(it.cur?' cur':'')+'" x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+w.toFixed(1)+'" height="'+Math.max(h,it.v>0?2:0).toFixed(1)+'" rx="2"/>';
+    if(it.v>0)s+='<text class="tl" x="'+(x+w/2).toFixed(1)+'" y="'+(y-4).toFixed(1)+'" text-anchor="middle">'+fmt(it.v/1000,1)+'</text>';
+    s+='<text x="'+(x+w/2).toFixed(1)+'" y="'+(H-24)+'" text-anchor="middle">'+it.l+'</text>';
+    s+='<text x="'+(x+w/2).toFixed(1)+'" y="'+(H-10)+'" text-anchor="middle">'+it.sub+'</text>';
+  });
+  return s+'</svg>';
+}
+
+/* ========= Màn hình: Hôm nay ========= */
+function sessSummary(){
+  const L=S.logs[ui.date];
+  if(!L)return '<span class="muted">Chưa ghi set nào.</span>';
+  const lv=logVol(L);
+  const rp=[];
+  for(const id in (L.ex||{})){
+    if(!EX[id])continue;
+    vsets(EX[id],L.ex[id].sets).forEach(function(s){
+      const r=s.rpe!=null?s.rpe:(s.w>0?estRPE(s.w,s.r,baselineFor(id,ui.date,true)):null);
+      if(r!=null)rp.push(r);
+    });
+  }
+  const avg=rp.length?rp.reduce(function(a,b){return a+b;},0)/rp.length:null;
+  return 'Buổi này: <b>'+lv.s+'</b> set, <b>'+fmt(lv.v,0)+'</b> kg tổng khối lượng, RPE trung bình <b>'+fmt(avg)+'</b>.';
+}
+function exBlock(id,dayk){
+  const ex=EX[id],date=ui.date,inc=getInc(ex);
+  const rec=recommend(ex,date),cyc=cycleInfo(date),dl=cyc&&cyc.deload;
+  let tw=rec.w;
+  if(dl&&rec.workW)tw=roundStep(rec.workW*0.9,inc||2.5);
+  const st=S.logs[date]&&S.logs[date].ex&&S.logs[date].ex[id];
+  let sets=st&&st.sets?st.sets.slice():[];
+  while(sets.length<ex.sets)sets.push(blank());
+  const B=baselineFor(id,date,true);
+  const pill={up:['up','Tăng +'+fmt(inc)+' kg'],hold:['hold','Giữ'],down:['down','Giảm'],start:['hold','Bắt đầu'],'new':['neu','Mới']}[rec.st];
+  const tgt=tw!=null?'<b class="num big">'+fmt(tw)+' kg</b> × '+rec.reps+' reps'+(dl?' (tuần deload, 2 set)':''):'<span class="muted">Tự chọn tạ hôm nay</span>';
+  let h='<section class="ex" style="'+dc(dayk)+'" data-exb="'+id+'">';
+  h+='<div class="eh"><h3>'+esc(ex.name)+'</h3><span class="rx">'+ex.sets+' set × '+ex.lo+'-'+ex.hi+(ex.pct?', '+ex.pct+' 1RM':'')+(ex.note?', '+esc(ex.note):'')+'</span></div>';
+  h+='<div class="tg"><span class="pill '+pill[0]+'">'+pill[1]+'</span><span>'+tgt+'</span></div>';
+  h+='<p class="why">'+esc(rec.why)+'</p>';
+  const pt=plateTxt(tw,ex);
+  if(pt)h+='<p class="pl">'+esc(pt)+'</p>';
+  h+='<div class="srow hd"><span></span><span>Tạ (kg)</span><span>Reps</span><span>RPE</span><span class="r">e1RM</span></div>';
+  sets.forEach(function(s,i){
+    const ok=s.r>0&&(s.w>0||ex.bw);
+    const est=ok&&s.w>0?estRPE(s.w,s.r,B):null;
+    const e=ok?e1rm(s.w,s.r,s.rpe):null;
+    h+='<div class="srow'+(ok?' done':'')+'" data-ex="'+id+'" data-i="'+i+'"><span class="sn">'+(i+1)+'</span>';
+    h+='<input class="in num" inputmode="decimal" data-f="set" data-k="w" data-ex="'+id+'" data-i="'+i+'" value="'+val(s.w)+'" placeholder="'+(tw!=null?fmt(tw):'kg')+'" aria-label="Tạ set '+(i+1)+'">';
+    h+='<input class="in num" inputmode="numeric" data-f="set" data-k="r" data-ex="'+id+'" data-i="'+i+'" value="'+val(s.r)+'" placeholder="'+ex.lo+'-'+ex.hi+'" aria-label="Reps set '+(i+1)+'">';
+    h+='<input class="in num" inputmode="decimal" data-f="set" data-k="rpe" data-ex="'+id+'" data-i="'+i+'" value="'+val(s.rpe)+'" placeholder="'+(est!=null?'≈'+fmt(est):'RPE')+'" aria-label="RPE set '+(i+1)+'">';
+    h+='<span class="e1">'+(e?fmt(e,1):'')+'</span></div>';
+  });
+  h+='<p class="live">'+esc(liveHint(ex,date))+'</p>';
+  h+='<div class="acts"><button class="btn sm" data-act="fill" data-ex="'+id+'">Điền tạ gợi ý</button><button class="btn sm" data-act="addset" data-ex="'+id+'">Thêm set</button>';
+  if(sets.length>ex.sets)h+='<button class="btn sm" data-act="delset" data-ex="'+id+'">Bớt set</button>';
+  h+='</div>';
+  h+='<input class="in note" data-f="exnote" data-ex="'+id+'" value="'+val(st&&st.note)+'" placeholder="Ghi chú: kỹ thuật, đau, cảm giác" aria-label="Ghi chú '+esc(ex.name)+'">';
+  return h+'</section>';
+}
+function wLast(before){
+  const a=bodySeries().filter(function(p){return p.l<before;});
+  return a.length?a[a.length-1].y:null;
+}
+function wAvg(a,last){
+  const w=a.filter(function(p){return p.t>=last.t-6*864e5&&p.t<=last.t;});
+  return w.reduce(function(x,p){return x+p.y;},0)/w.length;
+}
+function wtInfo(date){
+  const a=bodySeries().filter(function(p){return p.l<=date;});
+  if(!a.length)return 'Cân nặng mỗi sáng sau khi đi vệ sinh, trước khi ăn, sẽ cho số liệu ổn định nhất.';
+  const cur=a[a.length-1];
+  let t='Trung bình 7 ngày: <b>'+fmt(wAvg(a,cur))+' kg</b>';
+  if(cur.l===date&&a.length>1){const pv=a[a.length-2],d=cur.y-pv.y;t+=', so với lần trước ('+dm(pv.l)+'): '+(d>0?'+':'')+fmt(d)+' kg';}
+  return t;
+}
+function condPlan(date){
+  const c=cycleInfo(date);
+  if(!c)return {rounds:5,w:null,len:null,deload:false,text:'5 vòng: 3 phút nhanh (RPE 7-8), 2 phút nhẹ (RPE 3-4)'};
+  if(c.deload)return {rounds:3,w:c.w,len:c.len,deload:true,text:'Deload: 3 vòng nhẹ (RPE từ 7 trở xuống) hoặc bỏ buổi này'};
+  const rounds=Math.min(6,4+Math.floor((c.w-1)/2));
+  const tip=c.w<=2?'làm quen, đoạn nhanh ở RPE 7':(c.w%2===0?'giữ RPE từ 8 trở xuống, thử nhanh hơn 2-3 giây mỗi 500m':'giữ RPE từ 8 trở xuống');
+  return {rounds:rounds,w:c.w,len:c.len,deload:false,text:rounds+' vòng: 3 phút nhanh (RPE 7-8), 2 phút nhẹ (RPE 3-4), '+tip};
+}
+function condSchedule(){
+  const mon=parseYmd(weekKey(todayStr));
+  let h='<h2>Lịch conditioning</h2>';
+  if(!S.settings.cycleStart)h+='<p class="small muted">Đặt ngày bắt đầu chu kỳ trong Hồ sơ để lịch chia theo tuần và có tuần deload. Hiện đang dùng mặc định 5 vòng.</p>';
+  for(let k=-2;k<=5;k++){
+    const wm=addDays(mon,7*k),ds=ymd(addDays(wm,2)),we=ymd(addDays(wm,6));
+    const pl=condPlan(ds);
+    let got=null;
+    for(let i=0;i<7;i++){const d=ymd(addDays(wm,i)),L=S.logs[d];if(L&&L.cond&&L.cond.rounds>0){got=L.cond;break;}}
+    let pill;
+    if(got)pill='<span class="pill up">Xong: '+got.rounds+' vòng'+(got.rpe!=null?', RPE '+fmt(got.rpe):'')+'</span>';
+    else if(we<todayStr)pill='<span class="pill down">Bỏ lỡ</span>';
+    else if(ds<todayStr)pill='<span class="pill hold">Chưa ghi</span>';
+    else if(ds===todayStr)pill='<span class="pill hold">Hôm nay</span>';
+    else pill='<span class="pill neu">Sắp tới</span>';
+    h+='<div class="dl cs"><div class="eh"><b>T4 '+dm(ds)+(pl.w?', tuần '+pl.w+'/'+pl.len:'')+'</b>'+pill+'</div><div class="small">'+esc(pl.text)+'</div><button class="btn sm" data-act="caledit" data-date="'+ds+'">Mở ngày này</button></div>';
+  }
+  return h;
+}
+function lastCond(before){
+  const ds=Object.keys(S.logs).filter(function(d){return d<before&&S.logs[d].cond&&S.logs[d].cond.rounds>0;}).sort();
+  return ds.length?{date:ds[ds.length-1],c:S.logs[ds[ds.length-1]].cond}:null;
+}
+function rCond(L){
+  const c=L.cond||{},cyc=cycleInfo(ui.date),lc=lastCond(ui.date);
+  let h='<section class="blk" style="'+dc('cond')+'"><h3>Máy chèo</h3>';
+  const pl=condPlan(ui.date);
+  h+='<p class="muted">Khởi động 5 phút, hạ nhiệt 5 phút.</p><p><b>Kế hoạch hôm nay:</b> '+esc(pl.text)+'.</p>';
+  h+='<div class="grid2">';
+  h+='<label>Số vòng hoàn thành<input class="in num" inputmode="numeric" data-f="cond" data-k="rounds" value="'+val(c.rounds)+'" placeholder="'+pl.rounds+'"></label>';
+  h+='<label>RPE đoạn nhanh<input class="in num" inputmode="decimal" data-f="cond" data-k="rpe" value="'+val(c.rpe)+'" placeholder="7-8"></label>';
+  h+='<label>Tổng quãng đường (m)<input class="in num" inputmode="numeric" data-f="cond" data-k="dist" value="'+val(c.dist)+'" placeholder="m"></label>';
+  h+='<label>Nhịp trung bình /500m<input class="in num" data-f="cond" data-k="split" value="'+val(c.split)+'" placeholder="2:05"></label></div>';
+  h+='<input class="in note" data-f="cond" data-k="note" value="'+val(c.note)+'" placeholder="Ghi chú" aria-label="Ghi chú conditioning">';
+  if(lc){
+    h+='<p class="small muted">Gần nhất ('+dm(lc.date)+'): '+lc.c.rounds+' vòng, RPE '+fmt(lc.c.rpe)+(lc.c.dist?', '+lc.c.dist+' m':'')+'.</p>';
+    h+='<p class="small">Làm đủ số vòng của kế hoạch với RPE từ 8 trở xuống thì sang bước tiếp theo.</p>';
+  }
+  return h+'</section>';
+}
+function rRest(L){
+  const r=L.rest||{};
+  const acts=['','Đi bộ nhanh','Đạp xe nhẹ','Bơi','Nghỉ hẳn'];
+  let h='<section class="blk" style="'+dc('rest')+'"><h3>Zone 2 hoặc nghỉ</h3><p class="muted">30-45 phút, nhịp thở đều, vừa tập vừa nói chuyện được.</p><div class="grid2">';
+  h+='<label>Hoạt động<select class="in" data-f="rest" data-k="act">'+acts.map(function(a){return '<option value="'+a+'"'+(r.act===a?' selected':'')+'>'+(a||'Chọn')+'</option>';}).join('')+'</select></label>';
+  h+='<label>Số phút<input class="in num" inputmode="numeric" data-f="rest" data-k="min" value="'+val(r.min)+'" placeholder="phút"></label></div>';
+  h+='<input class="in note" data-f="rest" data-k="note" value="'+val(r.note)+'" placeholder="Ghi chú" aria-label="Ghi chú">';
+  return h+'</section>';
+}
+function rToday(){
+  const date=ui.date,day=DAY[ui.dayKey],L=S.logs[date]||{},dt=parseYmd(date),cyc=cycleInfo(date);
+  let h='<section class="hero" style="'+dc(day.k)+'"><span class="plate">'+day.s+'</span><div><h1>'+esc(day.t)+'</h1><p class="sub">'+WD[dt.getDay()]+', '+pad(dt.getDate())+'/'+pad(dt.getMonth()+1)+'/'+dt.getFullYear()+'</p></div></section>';
+  h+='<div class="ctl"><button class="ib" data-act="dprev" aria-label="Ngày trước">‹</button><input type="date" class="in" data-f="date" value="'+date+'" aria-label="Chọn ngày"><button class="ib" data-act="dnext" aria-label="Ngày sau">›</button>';
+  h+='<select class="in" data-f="day" aria-label="Loại buổi tập">'+DAYS.map(function(d){return '<option value="'+d.k+'"'+(d.k===ui.dayKey?' selected':'')+'>'+d.s+': '+esc(d.t)+'</option>';}).join('')+'</select></div>';
+  if(cyc){
+    h+='<div class="chip'+(cyc.deload?' deload':'')+'">Tuần '+cyc.w+'/'+cyc.len+(cyc.deload?': tuần deload. Giảm còn 2 set mỗi bài, tạ giảm khoảng 10%, bỏ hoặc rút ngắn conditioning.':'. Tăng tạ theo ngưỡng như bình thường.')+'</div>';
+  }else{
+    h+='<p class="small muted">Đặt ngày bắt đầu chu kỳ trong tab Hồ sơ để biết tuần nào cần deload.</p>';
+  }
+  h+='<div class="body one"><label>Cân nặng sáng nay (kg)<input class="in num" inputmode="decimal" data-f="log" data-k="body" value="'+val(L.body)+'" placeholder="'+val(wLast(date))+'"></label></div><p class="small muted" id="wtinfo">'+wtInfo(date)+'</p>';
+  if(day.type==='lift'){
+    h+=day.ex.map(function(id){return exBlock(id,day.k);}).join('');
+    h+='<div class="sess" id="sess">'+sessSummary()+'</div>';
+  }else if(day.type==='cond'){h+=rCond(L);}
+  else{h+=rRest(L);}
+  if(S.logs[date]){
+    h+='<p><button class="btn sm" data-act="delday">'+(ui.armDel===date?'Bấm lần nữa để xoá dữ liệu ngày này':'Xoá dữ liệu ngày này')+'</button></p>';
+  }
+  return h;
+}
+
+/* ========= Màn hình: Lịch ========= */
+function dayDetail(ds){
+  const L=S.logs[ds];
+  if(!L||!hasWork(L))return '<p class="empty">Ngày '+dm(ds)+' chưa có buổi tập nào.'+(L&&L.body>0?' Cân nặng: '+fmt(L.body)+' kg.':'')+'</p>';
+  const day=DAY[L.day||BYDOW[parseYmd(ds).getDay()]];
+  let h='<div style="'+dc(day.k)+'" class="hero"><span class="plate sm">'+day.s+'</span><div><b>'+esc(day.t)+'</b>, '+dm(ds)+'</div></div>';
+  if(L.body>0)h+='<p class="small muted">Cân nặng: '+fmt(L.body)+' kg</p>';
+  for(const id in (L.ex||{})){
+    if(!EX[id])continue;
+    const e=L.ex[id],v=vsets(EX[id],e.sets);
+    if(v.length)h+='<div class="dl"><b>'+esc(EX[id].name)+'</b><br>'+v.map(function(s){return fmt(s.w)+'×'+s.r+(s.rpe!=null?' @'+fmt(s.rpe):'');}).join(',  ')+(e.note?'<br><span class="muted">'+esc(e.note)+'</span>':'')+'</div>';
+  }
+  const lv=logVol(L);
+  if(lv.s)h+='<p class="small muted">'+lv.s+' set, '+fmt(lv.v,0)+' kg tổng khối lượng.</p>';
+  if(L.cond&&L.cond.rounds>0)h+='<div class="dl"><b>Máy chèo</b><br>'+L.cond.rounds+' vòng, RPE '+fmt(L.cond.rpe)+(L.cond.dist?', '+L.cond.dist+' m':'')+(L.cond.split?', nhịp '+esc(L.cond.split)+'/500m':'')+'</div>';
+  if(L.rest&&L.rest.min>0)h+='<div class="dl"><b>'+esc(L.rest.act||'Hoạt động nhẹ')+'</b><br>'+L.rest.min+' phút</div>';
+  return h+'<p><button class="btn sm" data-act="caledit" data-date="'+ds+'">Mở để xem hoặc sửa</button></p>';
+}
+function rCal(){
+  const a=ui.month.split('-').map(Number),y=a[0],m=a[1];
+  const off=(new Date(y,m-1,1).getDay()+6)%7,dim=new Date(y,m,0).getDate();
+  const ms=monthStats(ui.month);
+  let h='<div class="mh"><button class="ib" data-act="mprev" aria-label="Tháng trước">‹</button><strong>Tháng '+m+'/'+y+'</strong><button class="ib" data-act="mnext" aria-label="Tháng sau">›</button></div>';
+  h+='<div class="stats"><div><b>'+ms.done+(ms.planned?'/'+ms.planned:'')+'</b>buổi đã tập'+(ms.planned?' ('+Math.min(100,Math.round(ms.done/ms.planned*100))+'%)':'')+'</div><div><b>'+ms.sets+'</b>set</div><div><b>'+fmt(ms.vol/1000,1)+'</b>tấn khối lượng</div><div><b>'+ms.pr+'</b>kỷ lục e1RM</div></div>';
+  h+='<div class="cal">'+WS.map(function(w){return '<div class="wd">'+w+'</div>';}).join('');
+  for(let i=0;i<off;i++)h+='<div class="cell off"></div>';
+  for(let d=1;d<=dim;d++){
+    const ds=ui.month+'-'+pad(d),L=S.logs[ds],dow=parseYmd(ds).getDay(),dk=(L&&L.day)||BYDOW[dow];
+    const done=L&&hasWork(L),plannedDay=DAY[BYDOW[dow]].type!=='rest';
+    let dot='<span class="dot none"></span>';
+    if(done)dot='<span class="dot" style="'+dc(dk)+'"></span>';
+    else if(ds<todayStr&&plannedDay)dot='<span class="dot miss"></span>';
+    h+='<button class="cell'+(ds===todayStr?' today':'')+(ds===ui.calSel?' sel':'')+'" data-act="calsel" data-date="'+ds+'" aria-label="Ngày '+d+'">'+d+dot+'</button>';
+  }
+  h+='</div><p class="small muted">Chấm màu là buổi đã tập. Vòng rỗng là buổi theo lịch nhưng chưa ghi.</p>';
+  h+='<h2>Chi tiết ngày</h2>'+dayDetail(ui.calSel);
+  h+=condSchedule();
+  return h;
+}
+
+/* ========= Màn hình: Tổng kết ========= */
+function weightSection(){
+  const a=bodySeries();
+  let h='<h2>Cân nặng</h2>';
+  if(!a.length)return h+'<p class="empty">Nhập cân nặng ở tab Hôm nay để thấy xu hướng.</p>';
+  const last=a[a.length-1];
+  const base=function(days){const w=a.filter(function(p){return p.t>=last.t-days*864e5&&p.t<last.t;});return w.length?w[0]:null;};
+  const d7=base(7),d30=base(30);
+  const sg=function(x){return (x>0?'+':'')+fmt(x);};
+  h+='<div class="stats"><div><b>'+fmt(last.y)+'</b>kg ('+dm(last.l)+')</div><div><b>'+fmt(wAvg(a,last))+'</b>trung bình 7 ngày</div><div><b>'+(d7?sg(last.y-d7.y):'–')+'</b>trong 7 ngày qua</div><div><b>'+(d30?sg(last.y-d30.y):'–')+'</b>trong 30 ngày qua</div></div>';
+  const pts=a.slice(-60);
+  const ma=pts.map(function(p){return {t:p.t,y:+wAvg(a,p).toFixed(2),l:p.l};});
+  h+=lineChart(pts,{c:'var(--c-upper)',label:'Cân nặng hàng ngày',dec:1,extra:ma});
+  h+='<p class="small muted">Đường màu là cân nặng từng ngày, đường nét đứt là trung bình 7 ngày. Nhìn đường nét đứt để biết xu hướng thật.</p>';
+  return h;
+}
+function rSum(){
+  const keys=Object.keys(S.logs).filter(function(d){return hasWork(S.logs[d]);});
+  let vol=0;
+  keys.forEach(function(d){vol+=logVol(S.logs[d]).v;});
+  const prs=prMap();
+  let pr=0;
+  for(const d in prs)pr+=prs[d];
+  let h='<h1>Tổng kết</h1>';
+  h+='<p>Đã ghi <b>'+keys.length+'</b> buổi, tổng <b>'+fmt(vol/1000,1)+'</b> tấn tạ, <b>'+pr+'</b> lần phá kỷ lục e1RM.</p>';
+  h+=weightSection();
+  const ids=exWithData();
+  if(ids.indexOf(ui.selEx)<0&&ids.length)ui.selEx=ids[0];
+  h+='<h2>e1RM theo thời gian</h2>';
+  if(ids.length){
+    h+='<select class="in" data-f="selEx" aria-label="Chọn bài">'+ids.map(function(id){return '<option value="'+id+'"'+(id===ui.selEx?' selected':'')+'>'+esc(EX[id].name)+'</option>';}).join('')+'</select>';
+    h+=lineChart(e1Series(ui.selEx),{c:'var(--c-pull)',label:'e1RM '+EX[ui.selEx].name,dec:0});
+    h+='<p class="small muted">e1RM tính theo Epley. Nếu bạn nhập RPE thì reps còn dư được cộng vào.</p>';
+  }else h+='<p class="empty">Ghi vài buổi tập để thấy đường e1RM.</p>';
+  const items=[];
+  const wk0=weekKey(todayStr);
+  for(let k=7;k>=0;k--){
+    const ws=ymd(addDays(parseYmd(wk0),-7*k));
+    let v=0,c=0;
+    Object.keys(S.logs).forEach(function(d){if(weekKey(d)===ws&&hasWork(S.logs[d])){v+=logVol(S.logs[d]).v;c++;}});
+    items.push({l:dm(ws),v:v,sub:c+' buổi',cur:k===0});
+  }
+  h+='<h2>Khối lượng theo tuần (tấn)</h2>'+(items.some(function(i){return i.v>0;})?barChart(items,'Khối lượng theo tuần'):'<p class="empty">Chưa có dữ liệu khối lượng.</p>');
+  const wk=ymd(addDays(parseYmd(wk0),-7*ui.wkOff)),ms=muscleSets(wk);
+  h+='<h2>Set theo nhóm cơ</h2><div class="acts"><button class="btn sm'+(ui.wkOff===0?' on':'')+'" data-act="wk" data-v="0">Tuần này</button><button class="btn sm'+(ui.wkOff===1?' on':'')+'" data-act="wk" data-v="1">Tuần trước</button></div>';
+  MUS.forEach(function(m){
+    const v=ms[m],cls=v<10?' low':(v>16?' hi':'');
+    h+='<div class="hb"><span>'+m+'</span><div class="tr"><div class="band"></div><div class="fl'+cls+'" style="width:'+Math.min(100,v/20*100)+'%"></div></div><span class="v num">'+v+'</span></div>';
+  });
+  h+='<p class="small muted">Khung nét đứt là 10-16 set mỗi tuần, mức thường dùng để tăng cơ. Power clean tính vào lưng.</p>';
+  h+='<h2>RPE trung bình mỗi buổi</h2>'+lineChart(rpeSeries(),{c:'var(--c-push)',label:'RPE trung bình',dec:1,empty:'Chưa có RPE. Ghi reps và tạ để app tự ước tính.'});
+  return h;
+}
+
+/* ========= Màn hình: Tăng tạ ========= */
+function recItem(ex,r){
+  const inc=getInc(ex),E=baselineFor(ex.id,'9999-12-31');
+  const pill={up:['up','Tăng +'+fmt(inc)+' kg'],hold:['hold','Giữ'],down:['down','Giảm'],start:['hold','Bắt đầu']}[r.st];
+  let h='<article class="rec" style="'+dc(EXDAY[ex.id])+'"><div class="rh"><h3>'+esc(ex.name)+'</h3><span class="pill '+pill[0]+'">'+pill[1]+'</span></div>';
+  h+='<div class="tg"><b class="num big">'+fmt(r.w)+' kg</b><span>× '+r.reps+' reps buổi tới</span></div>';
+  if(r.ev){
+    const cap=ex.sets*ex.hi,pct=Math.min(100,r.ev.total/cap*100);
+    h+='<div class="bg"><i style="width:'+pct.toFixed(0)+'%"></i></div><div class="mt">Ngưỡng tăng: '+r.ev.total+'/'+cap+' reps ('+ex.sets+' set × '+ex.hi+' ở '+fmt(r.ev.workW)+' kg)</div>';
+  }
+  h+='<div class="mt">'+esc(r.why)+'</div>';
+  if(r.last)h+='<div class="mt">Gần nhất ('+dm(r.last.date)+'): '+r.last.sets.map(function(s){return fmt(s.w)+'×'+s.r;}).join(', ')+'</div>';
+  if(E){
+    const ceil=Math.floor(E/(1+(ex.lo+2)/30)/(inc||2.5))*(inc||2.5);
+    h+='<div class="mt">e1RM '+fmt(E,0)+' kg. Trần ước tính: '+fmt(ceil)+' kg cho '+ex.lo+' reps ở RPE 8. Con số này thấp hơn thực tế nếu bạn chưa nhập RPE.</div>';
+  }
+  if(r.workW&&inc>0)h+='<div class="mt">Nếu tăng 1 mức mỗi 2 tuần: 4 tuần khoảng '+fmt(roundStep(r.workW+2*inc,inc))+' kg, 8 tuần khoảng '+fmt(roundStep(r.workW+4*inc,inc))+' kg.</div>';
+  return h+'</article>';
+}
+function rProg(){
+  const list=[];
+  DAYS.filter(function(d){return d.type==='lift';}).forEach(function(d){d.ex.forEach(function(id){list.push({ex:EX[id],r:recommend(EX[id],'9999-12-31')});});});
+  const order={up:0,down:1,hold:2,start:3,'new':4};
+  const sorted=list.slice().sort(function(a,b){return order[a.r.st]-order[b.r.st];});
+  const ups=list.filter(function(x){return x.r.st==='up';}).length;
+  let h='<h1>Tăng tạ</h1><p>'+(ups?'Buổi tới có <b>'+ups+'</b> bài đủ ngưỡng để tăng tạ.':'Chưa bài nào đủ ngưỡng. Ghi thêm buổi tập để app đánh giá.')+'</p>';
+  h+='<p class="small muted">Quy tắc: làm đủ số set ở mức reps cao nhất của dải thì tăng tạ. Hai buổi liền dưới reps thấp nhất thì giảm khoảng 10%. RPE trung bình từ 9.5 thì lặp lại thêm một buổi.</p>';
+  const have=sorted.filter(function(x){return x.r.st!=='new';}),none=sorted.filter(function(x){return x.r.st==='new';});
+  h+=have.map(function(x){return recItem(x.ex,x.r);}).join('');
+  if(none.length){
+    h+='<details><summary>Chưa có dữ liệu ('+none.length+' bài)</summary>'+none.map(function(x){return '<div class="dl"><b>'+esc(x.ex.name)+'</b><br><span class="muted">'+esc(x.r.why)+'</span></div>';}).join('')+'</details>';
+  }
+  const lifts=[];
+  DAYS.forEach(function(d){d.ex.forEach(function(id){lifts.push(id);});});
+  if(lifts.indexOf(ui.pctEx)<0)ui.pctEx=lifts[0];
+  const E=baselineFor(ui.pctEx,'9999-12-31'),ex=EX[ui.pctEx],inc=getInc(ex)||2.5;
+  h+='<h2>Bảng tạ theo % 1RM</h2><select class="in" data-f="pctEx" aria-label="Chọn bài">'+lifts.map(function(id){return '<option value="'+id+'"'+(id===ui.pctEx?' selected':'')+'>'+esc(EX[id].name)+'</option>';}).join('')+'</select>';
+  if(E){
+    h+='<p class="small muted">e1RM hiện tại: '+fmt(E,1)+' kg'+(ex.pct?'. Giáo án dùng '+ex.pct+' cho bài này':'')+'.</p><table><tr><th>% 1RM</th><th>Tạ</th><th>Reps tối đa</th></tr>';
+    [100,95,90,85,80,75,70,65,60].forEach(function(p){
+      const mr=p===100?1:Math.floor(30*(1/(p/100)-1));
+      const hl=ex.pct&&(function(){const a=ex.pct.replace('%','').split('-').map(Number);return p>=a[0]&&p<=a[1];})();
+      h+='<tr class="'+(hl?'hl':'')+'"><td>'+p+'%</td><td>'+fmt(roundStep(E*p/100,inc))+' kg</td><td>'+mr+'</td></tr>';
+    });
+    h+='</table>';
+  }else h+='<p class="empty">Chưa có e1RM cho bài này. Nhập tạ gốc trong Hồ sơ hoặc ghi một buổi tập.</p>';
+  return h;
+}
+
+/* ========= Màn hình: Hồ sơ ========= */
+function ansText(){
+  let t='Trả lời cho sổ tạ:\n';
+  QS.forEach(function(q,i){t+=(i+1)+'. '+q.q+'\n   '+((S.settings.answers[q.id])||'(chưa trả lời)')+'\n';});
+  return t;
+}
+function rMe(){
+  const st=S.settings;
+  let h='<h1>Hồ sơ</h1><h2>Chu kỳ tập</h2><div class="grid2">';
+  h+='<label>Ngày bắt đầu chu kỳ<input type="date" class="in" data-f="s" data-p="cycleStart" value="'+val(st.cycleStart)+'"></label>';
+  h+='<label>Độ dài chu kỳ<select class="in" data-f="s" data-p="cycleLen" data-num="1">'+[5,6,7].map(function(n){return '<option value="'+n+'"'+(+st.cycleLen===n?' selected':'')+'>'+n+' tuần (tuần cuối deload)</option>';}).join('')+'</select></label></div>';
+  h+='<h2>Tạ gốc (1RM)</h2><p class="small muted">Nhập 1RM hoặc ước tính gần đây. App dùng để gợi ý tạ khởi điểm và ước tính RPE ở buổi đầu.</p><div class="grid2">';
+  BASE_LIFTS.forEach(function(b){h+='<label>'+b[1]+' (kg)<input class="in num" inputmode="decimal" data-f="s" data-p="base1rm.'+b[0]+'" data-num="1" value="'+val(st.base1rm[b[0]])+'"></label>';});
+  h+='</div><h2>Máy tính</h2>';
+  h+='<h3>Tính 1RM từ một set</h3><div class="grid2"><label>Tạ (kg)<input class="in num" inputmode="decimal" id="c1w" data-f="calc"></label><label>Reps<input class="in num" inputmode="numeric" id="c1r" data-f="calc"></label><label>RPE (không bắt buộc)<input class="in num" inputmode="decimal" id="c1p" data-f="calc"></label></div><div class="out" id="c1o">–</div>';
+  h+='<h3>Ước tính RPE của một set</h3><div class="grid2"><label>Tạ (kg)<input class="in num" inputmode="decimal" id="c2w" data-f="calc"></label><label>Reps<input class="in num" inputmode="numeric" id="c2r" data-f="calc"></label><label>1RM (kg)<input class="in num" inputmode="decimal" id="c2m" data-f="calc"></label></div><div class="out" id="c2o">–</div>';
+  h+='<h3>Tạ cho mục tiêu</h3><div class="grid2"><label>1RM (kg)<input class="in num" inputmode="decimal" id="c3m" data-f="calc"></label><label>Reps mục tiêu<input class="in num" inputmode="numeric" id="c3r" data-f="calc"></label><label>RPE mục tiêu<input class="in num" inputmode="decimal" id="c3p" data-f="calc"></label></div><div class="out" id="c3o">–</div>';
+  h+='<h2>Thiết bị</h2><div class="grid2"><label>Cân nặng thanh (kg)<input class="in num" inputmode="decimal" data-f="s" data-p="bar" data-num="1" value="'+val(st.bar)+'"></label><label>Các mức đĩa (kg)<input class="in" data-f="s" data-p="plates" value="'+val(st.plates)+'"></label></div>';
+  h+='<details><summary>Bước tăng tạ từng bài</summary><div class="grid2">';
+  DAYS.forEach(function(d){d.ex.forEach(function(id){h+='<label>'+esc(EX[id].name)+' (kg)<input class="in num" inputmode="decimal" data-f="s" data-p="inc.'+id+'" value="'+val(st.inc[id]!=null?st.inc[id]:'')+'" placeholder="'+EX[id].inc+'"></label>';});});
+  h+='</div></details>';
+  h+='<h2>Câu hỏi để hoàn thiện sổ</h2><p class="small muted">Trả lời càng nhiều càng tốt, rồi sao chép gửi lại cho Claude để chỉnh sổ cho đúng với bạn.</p>';
+  QS.forEach(function(q,i){
+    const v=st.answers[q.id]||'';
+    h+='<label class="fld">'+(i+1)+'. '+esc(q.q);
+    if(q.opt)h+='<select class="in" data-f="s" data-p="answers.'+q.id+'">'+q.opt.map(function(o){return '<option value="'+esc(o)+'"'+(v===o?' selected':'')+'>'+(o||'Chọn')+'</option>';}).join('')+'</select>';
+    else h+='<input class="in" data-f="s" data-p="answers.'+q.id+'" value="'+esc(v)+'" placeholder="'+esc(q.ph||'')+'">';
+    h+='</label>';
+  });
+  h+='<div class="acts"><button class="btn fill" data-act="copyans">Sao chép câu trả lời</button></div>';
+  if(ui.ans!=null)h+='<textarea class="in" id="anst" readonly>'+esc(ui.ans)+'</textarea><p class="small muted" id="ansmsg"></p>';
+  h+='<h2>Sao lưu dữ liệu</h2><div class="acts"><button class="btn" data-act="export">Xuất dữ liệu</button><button class="btn" data-act="import">Nhập dữ liệu</button></div>';
+  if(ui.showIO==='export')h+='<textarea class="in" readonly>'+esc(JSON.stringify(S))+'</textarea><p class="small muted">Chọn hết rồi sao chép để lưu ở nơi khác.</p>';
+  if(ui.showIO==='import')h+='<textarea class="in" id="impt" placeholder="Dán dữ liệu đã xuất vào đây"></textarea><div class="acts"><button class="btn fill" data-act="doimport">Nhập vào sổ (ghi đè dữ liệu hiện tại)</button></div><p class="small muted" id="impmsg"></p>';
+  return h;
+}
+
+/* ========= Vẽ ========= */
+function render(){
+  document.querySelectorAll('.tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.tab===ui.tab);});
+  const f={today:rToday,cal:rCal,sum:rSum,prog:rProg,me:rMe}[ui.tab];
+  document.getElementById('main').innerHTML=f();
+}
+function keep(){const y=window.scrollY;render();window.scrollTo(0,y);save();}
+
+/* ========= Sự kiện ========= */
+function updateRow(row){
+  const id=row.dataset.ex,i=+row.dataset.i,ex=EX[id];
+  const s=S.logs[ui.date].ex[id].sets[i];
+  const B=baselineFor(id,ui.date,true);
+  const ok=s.r>0&&(s.w>0||ex.bw);
+  const est=ok&&s.w>0?estRPE(s.w,s.r,B):null;
+  const e=ok?e1rm(s.w,s.r,s.rpe):null;
+  row.classList.toggle('done',!!ok);
+  row.querySelector('[data-k=rpe]').placeholder=est!=null?'≈'+fmt(est):'RPE';
+  row.querySelector('.e1').textContent=e?fmt(e,1):'';
+  const blk=row.closest('.ex');
+  if(blk)blk.querySelector('.live').textContent=liveHint(ex,ui.date);
+  const se=document.getElementById('sess');
+  if(se)se.innerHTML=sessSummary();
+}
+function setRef(id,i){
+  const L=ensureLog(ui.date);
+  const e=L.ex[id]||(L.ex[id]={sets:[],note:''});
+  while(e.sets.length<Math.max(EX[id].sets,i+1))e.sets.push(blank());
+  return e.sets[i];
+}
+function setPath(obj,path,v){
+  const p=path.split('.');
+  for(let i=0;i<p.length-1;i++){obj=obj[p[i]]||(obj[p[i]]={});}
+  obj[p[p.length-1]]=v;
+}
+function calc(){
+  const g=function(id){return nn(document.getElementById(id).value);};
+  const set=function(id,t){document.getElementById(id).textContent=t;};
+  const w=g('c1w'),r=g('c1r'),p=g('c1p');
+  const e=e1rm(w,r,p);
+  set('c1o',e?'1RM ước tính: '+fmt(e,1)+' kg (80%: '+fmt(e*0.8)+', 85%: '+fmt(e*0.85)+')':'–');
+  const w2=g('c2w'),r2=g('c2r'),m2=g('c2m');
+  const rp=estRPE(w2,r2,m2);
+  set('c2o',rp!=null?'RPE ≈ '+fmt(rp)+', còn dư khoảng '+fmt(10-rp)+' reps':'–');
+  const m3=g('c3m'),r3=g('c3r'),p3=g('c3p');
+  if(m3>0&&r3>0&&p3!=null){const t=r3+Math.max(0,10-p3);set('c3o','Tạ gợi ý: '+fmt(t<=1?m3:m3/(1+t/30),1)+' kg');}
+  else set('c3o','–');
+}
+function shiftDate(n){ui.date=ymd(addDays(parseYmd(ui.date),n));ui.dayKey=dayKeyFor(ui.date);ui.armDel=null;render();window.scrollTo(0,0);}
+
+const act={
+  dprev:function(){shiftDate(-1);},
+  dnext:function(){shiftDate(1);},
+  addset:function(b){const id=b.dataset.ex,L=ensureLog(ui.date),e=L.ex[id]||(L.ex[id]={sets:[],note:''});while(e.sets.length<EX[id].sets)e.sets.push(blank());e.sets.push(blank());keep();},
+  delset:function(b){const id=b.dataset.ex,e=S.logs[ui.date]&&S.logs[ui.date].ex[id];if(e&&e.sets.length>EX[id].sets){e.sets.pop();keep();}},
+  fill:function(b){
+    const id=b.dataset.ex,ex=EX[id],rec=recommend(ex,ui.date),cyc=cycleInfo(ui.date);
+    let tw=rec.w;
+    if(cyc&&cyc.deload&&rec.workW)tw=roundStep(rec.workW*0.9,getInc(ex)||2.5);
+    if(tw==null)return;
+    for(let i=0;i<ex.sets;i++){const s=setRef(id,i);if(s.w==null)s.w=tw;}
+    keep();
+  },
+  delday:function(){
+    if(ui.armDel===ui.date){delete S.logs[ui.date];ui.armDel=null;keep();}
+    else{ui.armDel=ui.date;render();}
+  },
+  mprev:function(){const a=ui.month.split('-').map(Number),d=new Date(a[0],a[1]-2,1);ui.month=ymd(d).slice(0,7);render();},
+  mnext:function(){const a=ui.month.split('-').map(Number),d=new Date(a[0],a[1],1);ui.month=ymd(d).slice(0,7);render();},
+  calsel:function(b){ui.calSel=b.dataset.date;render();},
+  caledit:function(b){ui.date=b.dataset.date;ui.dayKey=dayKeyFor(ui.date);ui.tab='today';render();window.scrollTo(0,0);},
+  wk:function(b){ui.wkOff=+b.dataset.v;render();},
+  copyans:function(){
+    ui.ans=ansText();render();
+    const ta=document.getElementById('anst'),msg=document.getElementById('ansmsg');
+    const fallback=function(){ta.focus();ta.select();msg.textContent='Chọn hết và sao chép thủ công, rồi dán vào chat với Claude.';};
+    try{
+      if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(ui.ans).then(function(){msg.textContent='Đã sao chép. Dán vào chat với Claude.';},fallback);}
+      else fallback();
+    }catch(e){fallback();}
+  },
+  'export':function(){ui.showIO=ui.showIO==='export'?null:'export';render();},
+  'import':function(){ui.showIO=ui.showIO==='import'?null:'import';render();},
+  doimport:function(){
+    const msg=document.getElementById('impmsg');
+    try{
+      const o=JSON.parse(document.getElementById('impt').value);
+      if(!o||typeof o.logs!=='object')throw new Error('bad');
+      S=Object.assign(defS(),o);
+      S.settings=Object.assign(defS().settings,o.settings||{});
+      ui.showIO=null;ui.dayKey=dayKeyFor(ui.date);render();save();
+    }catch(e){msg.textContent='Dữ liệu không hợp lệ. Hãy dán đúng nội dung đã xuất.';}
+  }
+};
+
+let kbT=null;
+document.addEventListener('focusin',function(e){
+  if(/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)){clearTimeout(kbT);document.body.classList.add('kb');}
+});
+document.addEventListener('focusout',function(){
+  clearTimeout(kbT);kbT=setTimeout(function(){document.body.classList.remove('kb');},150);
+});
+document.addEventListener('click',function(e){
+  const b=e.target.closest('[data-tab],[data-act]');
+  if(!b)return;
+  if(b.dataset.tab){ui.tab=b.dataset.tab;ui.armDel=null;render();window.scrollTo(0,0);return;}
+  if(act[b.dataset.act])act[b.dataset.act](b,e);
+});
+document.addEventListener('input',function(e){
+  const t=e.target,f=t.dataset&&t.dataset.f;
+  if(!f)return;
+  if(f==='set'){
+    const s=setRef(t.dataset.ex,+t.dataset.i);
+    s[t.dataset.k]=nn(t.value);
+    S.logs[ui.date].day=S.logs[ui.date].day||ui.dayKey;
+    updateRow(t.closest('.srow'));save();
+  }else if(f==='exnote'){
+    const L=ensureLog(ui.date),id=t.dataset.ex,en=L.ex[id]||(L.ex[id]={sets:[],note:''});
+    en.note=t.value;save();
+  }else if(f==='log'){
+    const L=ensureLog(ui.date);L[t.dataset.k]=nn(t.value);const wi=document.getElementById('wtinfo');if(wi)wi.innerHTML=wtInfo(ui.date);save();
+  }else if(f==='cond'){
+    const L=ensureLog(ui.date),c=L.cond||(L.cond={}),k=t.dataset.k;
+    c[k]=(k==='note'||k==='split')?t.value:nn(t.value);save();
+  }else if(f==='rest'){
+    const L=ensureLog(ui.date),r=L.rest||(L.rest={}),k=t.dataset.k;
+    r[k]=(k==='min')?nn(t.value):t.value;save();
+  }else if(f==='s'){
+    const v=t.dataset.num?nn(t.value):t.value;
+    setPath(S.settings,t.dataset.p,v);save();
+  }else if(f==='calc'){calc();}
+});
+document.addEventListener('change',function(e){
+  const t=e.target,f=t.dataset&&t.dataset.f;
+  if(!f)return;
+  if(f==='date'){if(t.value){ui.date=t.value;ui.dayKey=dayKeyFor(ui.date);ui.armDel=null;render();}}
+  else if(f==='day'){
+    ui.dayKey=t.value;
+    if(S.logs[ui.date]){S.logs[ui.date].day=ui.dayKey;save();}
+    render();
+  }
+  else if(f==='selEx'){ui.selEx=t.value;render();}
+  else if(f==='pctEx'){ui.pctEx=t.value;render();}
+  else if(f==='s'&&t.tagName==='SELECT'){const v=t.dataset.num?nn(t.value):t.value;setPath(S.settings,t.dataset.p,v);save();}
+});
+
+(async function init(){
+  await load();
+  ui.dayKey=dayKeyFor(ui.date);
+  render();
+  setSaved(store.ok()?'':'Trình duyệt không cho lưu dữ liệu (chế độ riêng tư?)',!store.ok());
+})();
+</script>
+</body>
+</html>
